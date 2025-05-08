@@ -1,0 +1,7 @@
+flask==3.0.2
+flask-cors==4.0.0
+faster-whisper==0.10.0
+langchain-groq==0.1.1
+edge-tts==6.1.9
+Werkzeug==3.0.1
+python-dotenv==1.0.1 
