@@ -51,9 +51,12 @@ An interactive voice-based AI psychiatrist application that provides mental heal
    pip install -r requirements.txt
    ```
 
-4. Set up your Groq API key:
-   - Get your API key from [Groq](https://console.groq.com)
-   - Update the API key in `app.py`
+4. Set up your environment variables:
+   - Create a `.env` file in the project root
+   - Add your Groq API key:
+     ```
+     GROQ_API_KEY=your_api_key_here
+     ```
 
 ## Usage
 
@@ -81,7 +84,8 @@ AI-Psychiatrist/
 ├── templates/         # HTML templates
 │   └── index.html     # Main interface
 ├── uploads/          # Temporary audio storage
-├── responses/        # AI response audio files
+├── .env              # Environment variables (not tracked in git)
+├── .gitignore       # Git ignore file
 ├── LICENSE          # MIT License
 └── README.md        # Project documentation
 ```
@@ -98,6 +102,30 @@ AI-Psychiatrist/
 - Empathetic and supportive responses
 - Maintains conversation history
 - Rate-limited to prevent API overuse
+
+### Conversation History Implementation
+The application maintains context through a session-based conversation history system:
+
+1. **History Storage:**
+   - Uses Flask's session management to store conversation history
+   - Each conversation pair (user message + AI response) is stored as a dictionary
+   - History is maintained per user session
+
+2. **History Management:**
+   - Implements a threshold limit (MAX_HISTORY_LENGTH = 5)
+   - Automatically removes oldest conversations when limit is exceeded
+   - Preserves recent context while preventing memory overflow
+
+3. **Context Integration:**
+   - Formats conversation history into a readable string
+   - Prepends history to each new prompt
+   - Enables the AI to understand conversation flow and context
+   - Helps maintain coherent and contextual responses
+
+4. **Memory Efficiency:**
+   - Limits stored conversations to prevent token overflow
+   - Balances context retention with API efficiency
+   - Optimizes response quality while managing API costs
 
 ### User Interface
 - Modern and responsive design

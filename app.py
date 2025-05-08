@@ -9,6 +9,10 @@ import asyncio
 import logging
 from collections import deque
 import json
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -34,7 +38,7 @@ logger.info("Whisper model initialized successfully")
 logger.info("Initializing Groq LLM...")
 llm = ChatGroq(
     temperature=0.6,
-    groq_api_key="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",
+    groq_api_key=os.getenv('GROQ_API_KEY'),
     model_name="llama-3.3-70b-versatile"
 )
 logger.info("Groq LLM initialized successfully")
