@@ -10,6 +10,7 @@ import logging
 from collections import deque
 import json
 from dotenv import load_dotenv
+import time
 
 # Load environment variables
 load_dotenv()
@@ -94,7 +95,42 @@ def get_ai_response(transcription):
         return ai_response
     except Exception as e:
         logger.error(f"Error getting AI response: {str(e)}")
-        raise
+        # Return a fallback response
+        fallback_response = "I'm sorry, I'm having some trouble connecting to my thinking capabilities right now. Could you please try again in a moment?"
+        return fallback_response
+
+def get_ai_text_response(user_input):
+    logger.debug(f"Getting AI response for text input: {user_input[:100]}...")
+    
+    # Get conversation history
+    conversation_history = format_conversation_history()
+    
+    prompt = (
+        f"Previous conversation:\n{conversation_history}\n"
+        f"Current user message: {user_input}\n\n"
+        "You are a highly experienced, warm, and friendly AI Psychiatrist. "
+        "Please answer the user with empathy and offer supportive guidance based on their concerns. "
+        "Please provide the answer not too long and not too short like it should be like a conversation. "
+        "Please provide the answer in a way that is easy to understand and not too technical, not too formal and not too informal."
+    )
+    
+    try:
+        # Use the same LLM as voice chat to avoid API key issues
+        response = llm.invoke(prompt)
+        ai_response = response.content if hasattr(response, 'content') else str(response)
+        logger.debug(f"Successfully received AI response: {ai_response[:100]}...")
+        
+        # Add to conversation history
+        add_to_history(user_input, ai_response)
+        
+        return ai_response
+    except Exception as e:
+        logger.error(f"Error getting AI response: {str(e)}")
+        # Return a fallback response
+        fallback_response = "I'm sorry, I'm having some trouble connecting to my thinking capabilities right now. Could you please try again in a moment?"
+        # Still add to history so the UI flow is maintained
+        add_to_history(user_input, fallback_response)
+        return fallback_response
 
 # === Helper: Text to Speech with Edge-TTS ===
 async def edge_tts_async(text, output_path, voice="en-US-JennyNeural"):
@@ -147,6 +183,8 @@ def voice_chat():
         logger.debug("Getting AI response")
         ai_response = get_ai_response(transcription)
         logger.debug(f"AI response received: {ai_response[:100]}...")
+        
+        # Add to conversation history (already handled in get_ai_response)
 
         # Convert AI response to speech
         output_filename = f"response_{os.path.splitext(filename)[0]}.mp3"
@@ -172,6 +210,76 @@ def voice_chat():
 def index():
     logger.info("Serving index page")
     return render_template('index.html')
+
+@app.route('/chat')
+def chat():
+    logger.info("Serving chat page")
+    return render_template('chat.html')
+
+@app.route('/clear_history', methods=['POST'])
+def clear_history():
+    logger.info("Clearing conversation history")
+    if 'conversation_history' in session:
+        session['conversation_history'] = []
+    return jsonify({'status': 'success'}), 200
+
+@app.route('/get_history', methods=['GET'])
+def get_history():
+    logger.info("Getting conversation history")
+    history = get_conversation_history()
+    return jsonify({'history': history}), 200
+
+@app.route('/text_chat', methods=['POST'])
+def text_chat():
+    logger.info("Received text chat request")
+    try:
+        data = request.json
+        user_input = data.get('user_input')
+        if not user_input:
+            logger.error("No user input provided")
+            return jsonify({'error': 'No user input provided'}), 400
+            
+        logger.debug(f"User input: {user_input}")
+        
+        # Get AI response
+        logger.debug("Getting AI text response")
+        ai_response = get_ai_text_response(user_input)
+        logger.debug(f"AI response received: {ai_response[:100]}...")
+        
+        # Return the response as JSON
+        return jsonify({
+            'response': ai_response
+        })
+        
+    except Exception as e:
+        logger.error(f"Error processing text chat request: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/text_to_speech', methods=['POST'])
+def text_to_speech_route():
+    logger.info("Received text-to-speech request")
+    try:
+        data = request.json
+        text = data.get('text')
+        if not text:
+            logger.error("No text provided")
+            return jsonify({'error': 'No text provided'}), 400
+            
+        logger.debug(f"Converting text to speech: {text[:100]}...")
+        
+        # Generate a unique filename
+        output_filename = f"response_{int(time.time())}.mp3"
+        output_path = os.path.join(OUTPUT_FOLDER, output_filename)
+        
+        # Convert text to speech
+        text_to_speech(text, output_path)
+        
+        # Return the speech file
+        return send_file(output_path, mimetype='audio/mpeg')
+        
+    except Exception as e:
+        logger.error(f"Error processing text-to-speech request: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     logger.info("Starting Flask application")
