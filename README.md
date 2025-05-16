@@ -1,160 +1,128 @@
-# AI Psychiatrist Voice Chat
+# MindMate - Your Personal Mental Health Companion
 
-An interactive voice-based AI psychiatrist application that provides mental health support through natural conversations. The application uses advanced AI technologies to understand user concerns and provide empathetic responses.
+MindMate is a comprehensive mental health application that combines diary writing, mood tracking, and AI-powered chat support to help users maintain their mental well-being.
 
 ## Features
 
-- 🎙️ Voice-based interaction
-- 🤖 AI-powered responses using Groq LLM
-- 🎯 Context-aware conversations
-- 🎨 Modern and intuitive user interface
-- 🔒 Secure and confidential interactions
-- 🎧 High-quality text-to-speech responses
+### 1. Personal Diary
+- Create and manage daily diary entries
+- Upload and attach photos to entries
+- Track your mood for each entry
+- Browse entries by year
+- Beautiful polaroid-style photo gallery
+- Secure and private journaling experience
 
-## Technologies Used
+### 2. AI Chat Support
+- Voice and text-based chat interface
+- Real-time AI responses using advanced language models
+- Emotionally intelligent conversations
+- Voice-to-text and text-to-speech capabilities
+- Conversation history tracking
 
-- **Backend:**
-  - Flask (Python web framework)
-  - Faster Whisper (Speech-to-text)
-  - Groq LLM (AI responses)
-  - Edge-TTS (Text-to-speech)
+### 3. Dashboard
+- Quick access to key features
+- Mood tracking visualization
+- Daily task management
+- Activity overview
+- Personalized greeting based on time of day
 
-- **Frontend:**
-  - HTML5
-  - CSS3
-  - JavaScript
-  - Modern UI/UX design
+### 4. Stand-up Feature
+- Daily mental health check-ins
+- Track your emotional state
+- Set daily intentions
+- Monitor progress over time
 
-## Prerequisites
+## Technical Stack
 
-- Python 3.8 or higher
-- pip (Python package manager)
-- Web browser with microphone support
-- Groq API key
+### Frontend
+- HTML5, CSS3, JavaScript
+- Bootstrap 5 for responsive design
+- Custom CSS animations and transitions
+- Modern UI/UX design principles
+
+### Backend
+- Python Flask framework
+- MongoDB database
+- JWT authentication
+- RESTful API architecture
+
+### AI Integration
+- Groq LLM for intelligent responses
+- Whisper for voice transcription
+- Edge-TTS for text-to-speech conversion
 
 ## Installation
 
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/SaiPavankumar22/AI-Psychiatrist.git
-   cd AI-Psychiatrist
-   ```
+```bash
+git clone https://github.com/yourusername/mindmate.git
+cd mindmate
+```
 
-2. Create a virtual environment (recommended):
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+2. Install Python dependencies:
+```bash
+pip install -r requirements.txt
+```
 
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+3. Set up MongoDB:
+- Install MongoDB locally or use MongoDB Atlas
+- Create a database named 'mindmate_db'
 
-4. Set up your environment variables:
-   - Create a `.env` file in the project root
-   - Add your Groq API key:
-     ```
-     GROQ_API_KEY=your_api_key_here
-     ```
+4. Configure environment variables:
+Create a `.env` file with the following variables:
+```
+GROQ_API_KEY=your_groq_api_key
+SECRET_KEY=your_secret_key
+```
+
+5. Run the application:
+```bash
+python app.py
+```
 
 ## Usage
 
-1. Start the Flask application:
-   ```bash
-   python app.py
-   ```
+1. Register a new account or login
+2. Access the dashboard for an overview of your mental health journey
+3. Use the diary feature to write daily entries and track your mood
+4. Engage with the AI chat for support and guidance
+5. Use the stand-up feature for daily check-ins
 
-2. Open your web browser and navigate to:
-   ```
-   http://localhost:5000
-   ```
+## Security Features
 
-3. Click "Start Recording" to begin your conversation
-4. Speak your message
-5. Click "Stop Recording" to send your message
-6. Wait for the AI's response
-
-## Project Structure
-
-```
-AI-Psychiatrist/
-├── app.py              # Main Flask application
-├── requirements.txt    # Python dependencies
-├── templates/         # HTML templates
-│   └── index.html     # Main interface
-├── uploads/          # Temporary audio storage
-├── .env              # Environment variables (not tracked in git)
-├── .gitignore       # Git ignore file
-├── LICENSE          # MIT License
-└── README.md        # Project documentation
-```
-
-## Features in Detail
-
-### Voice Interaction
-- Real-time audio recording
-- High-quality speech-to-text conversion
-- Natural text-to-speech responses
-
-### AI Responses
-- Context-aware conversations
-- Empathetic and supportive responses
-- Maintains conversation history
-- Rate-limited to prevent API overuse
-
-### Conversation History Implementation
-The application maintains context through a session-based conversation history system:
-
-1. **History Storage:**
-   - Uses Flask's session management to store conversation history
-   - Each conversation pair (user message + AI response) is stored as a dictionary
-   - History is maintained per user session
-
-2. **History Management:**
-   - Implements a threshold limit (MAX_HISTORY_LENGTH = 5)
-   - Automatically removes oldest conversations when limit is exceeded
-   - Preserves recent context while preventing memory overflow
-
-3. **Context Integration:**
-   - Formats conversation history into a readable string
-   - Prepends history to each new prompt
-   - Enables the AI to understand conversation flow and context
-   - Helps maintain coherent and contextual responses
-
-4. **Memory Efficiency:**
-   - Limits stored conversations to prevent token overflow
-   - Balances context retention with API efficiency
-   - Optimizes response quality while managing API costs
-
-### User Interface
-- Modern and responsive design
-- Real-time status updates
-- Visual recording indicators
-- Mobile-friendly layout
+- JWT-based authentication
+- Password hashing
+- Secure session management
+- Protected API endpoints
+- Secure file uploads
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
-
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Acknowledgments
 
-- [Groq](https://groq.com) for providing the LLM API
-- [Faster Whisper](https://github.com/guillaumekln/faster-whisper) for speech recognition
-- [Edge-TTS](https://github.com/rany2/edge-tts) for text-to-speech conversion
+- Bootstrap for the frontend framework
+- Groq for AI language model
+- Whisper for voice transcription
+- Edge-TTS for text-to-speech conversion
 
-## Contact
+## Support
 
-D.Sai Pavan kumar - [GitHub](https://github.com/SaiPavankumar22)
+For support, please open an issue in the GitHub repository or contact the development team.
 
-Project Link: [https://github.com/SaiPavankumar22/AI-Psychiatrist](https://github.com/SaiPavankumar22/AI-Psychiatrist) 
+## Future Enhancements
+
+- Mobile application development
+- Additional AI models integration
+- Enhanced mood tracking analytics
+- Social features for community support
+- Integration with health tracking devices 
