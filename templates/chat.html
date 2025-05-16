@@ -560,11 +560,11 @@
                     method: 'POST'
                 })
                 .then(() => {
-                    window.location.href = '/';
+                    window.location.href = '/voice';
                 })
                 .catch(error => {
                     console.error("Error clearing history:", error);
-                    window.location.href = '/';
+                    window.location.href = '/voice';
                 });
             });
             
