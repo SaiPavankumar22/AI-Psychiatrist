@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindMate - Your Mental Wellness Companion</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #a5d8ff;
+            --secondary-color: #ffd6e7;
+            --tertiary-color: #c3fae8;
+            --accent-color: #5c7cfa;
+            --text-color: #495057;
+            --light-bg: #f8f9fa;
+            --white: #ffffff;
+        }
+        
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, var(--light-bg), var(--tertiary-color));
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+        
+        .welcome-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .hero-section {
+            background-color: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            overflow: hidden;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        
+        .hero-content {
+            padding: 4rem 2rem;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #343a40;
+            margin-bottom: 1rem;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: #6c757d;
+        }
+        
+        .brand-highlight {
+            color: var(--accent-color);
+            font-weight: 700;
+        }
+        
+        .features-section {
+            margin-bottom: 3rem;
+        }
+        
+        .feature-card {
+            background-color: var(--white);
+            border-radius: 15px;
+            padding: 1.5rem;
+            height: 100%;
+            transition: transform 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+        }
+        
+        .auth-section {
+            background-color: var(--white);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+        
+        .auth-tabs .nav-link {
+            color: #6c757d;
+            border-radius: 10px;
+            padding: 0.8rem 1.5rem;
+            font-weight: 600;
+        }
+        
+        .auth-tabs .nav-link.active {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+        }
+        
+        .form-control {
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            border: 1px solid #dee2e6;
+            margin-bottom: 1rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--accent-color);
+            border: none;
+            border-radius: 10px;
+            padding: 0.8rem 2rem;
+            font-weight: 600;
+        }
+        
+        .btn-primary:hover {
+            background-color: #4c6ef5;
+        }
+        
+        .social-login {
+            margin-top: 1rem;
+        }
+        
+        .social-btn {
+            border-radius: 10px;
+            padding: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .social-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .google-btn {
+            background-color: #fff;
+            color: #4285f4;
+            border: 1px solid #4285f4;
+        }
+        
+        .google-btn:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .animated-bubble {
+            position: absolute;
+            background-color: rgba(165, 216, 255, 0.3);
+            border-radius: 50%;
+            animation: float 8s infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+        
+        .footer {
+            margin-top: 2rem;
+            color: #6c757d;
+            text-align: center;
+        }
+        
+        .nav-pills .nav-link.active {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+        }
+        
+        .error-message {
+            color: #dc3545;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .success-message {
+            color: #28a745;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    {% include 'nav.html' %}
+    
+    <div class="welcome-container">
+        <div class="animated-bubble" style="width: 100px; height: 100px; top: 10%; left: 5%; animation-delay: 0s;"></div>
+        <div class="animated-bubble" style="width: 50px; height: 50px; top: 20%; right: 10%; animation-delay: 1s;"></div>
+        <div class="animated-bubble" style="width: 70px; height: 70px; bottom: 30%; left: 15%; animation-delay: 2s;"></div>
+        
+        <div class="row align-items-center hero-section">
+            <div class="col-lg-6 hero-content">
+                <h1 class="hero-title">Welcome to <span class="brand-highlight">MindMate</span></h1>
+                <p class="hero-subtitle">Your AI-powered mental wellness companion</p>
+                <p class="lead mb-4">Reduce stress, track your emotional journey, and build healthier habits with personalized support.</p>
+                <a href="#auth-section" class="btn btn-primary btn-lg">Get Started</a>
+            </div>
+            <div class="col-lg-6 p-0 d-none d-lg-block">
+                <img src="https://placehold.co/600x400/a5d8ff/ffffff?text=MindMate" alt="MindMate Illustration" class="img-fluid">
+            </div>
+        </div>
+        
+        <div class="features-section">
+            <div class="text-center mb-5">
+                <h2>How MindMate Helps You</h2>
+                <p class="lead">Our features are designed to support your mental wellness journey</p>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-chat-heart"></i>
+                        </div>
+                        <h3>AI Chat Support</h3>
+                        <p>Talk with our AI companion trained in therapeutic conversation to provide emotional support anytime.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-journal-text"></i>
+                        </div>
+                        <h3>Virtual Diary</h3>
+                        <p>Track your emotions and thoughts in a beautiful, customizable journal with mood tracking.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-trophy"></i>
+                        </div>
+                        <h3>Goal Setting & Rewards</h3>
+                        <p>Set wellness goals, track your progress, and earn rewards for developing healthy habits.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-list-check"></i>
+                        </div>
+                        <h3>Peace Planner</h3>
+                        <p>Organize your tasks and schedule breaks to maintain a balanced, stress-free day.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-lightning-charge"></i>
+                        </div>
+                        <h3>Daily Challenges</h3>
+                        <p>Engage with simple mindfulness activities that promote mental wellness every day.</p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-peace"></i>
+                        </div>
+                        <h3>Mindfulness Tools</h3>
+                        <p>Access guided meditations and positive affirmations to center yourself and find calm.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="auth-section" class="auth-section">
+            <ul class="nav nav-pills auth-tabs mb-4 justify-content-center" id="auth-tab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="login-tab" data-bs-toggle="pill" data-bs-target="#login" type="button" role="tab" aria-controls="login" aria-selected="true">Login</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="signup-tab" data-bs-toggle="pill" data-bs-target="#signup" type="button" role="tab" aria-controls="signup" aria-selected="false">Sign Up</button>
+                </li>
+            </ul>
+            
+            <div class="tab-content" id="auth-tabContent">
+                <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="loginEmail" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="loginEmail" placeholder="name@example.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password" required>
+                        </div>
+                        <div id="loginError" class="error-message"></div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="#" class="text-decoration-none">Forgot password?</a>
+                        </div>
+                    </form>
+                    
+                    <div class="social-login">
+                        <p class="text-center">Or login with</p>
+                        <div class="d-grid">
+                            <button class="btn social-btn google-btn">
+                                <i class="bi bi-google me-2"></i> Google
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-pane fade" id="signup" role="tabpanel" aria-labelledby="signup-tab">
+                    <form id="signupForm">
+                        <div class="mb-3">
+                            <label for="signupName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="signupName" placeholder="Enter your name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="signupEmail" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="signupEmail" placeholder="name@example.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="signupPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="signupPassword" placeholder="Create a password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirm-password" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirm-password" placeholder="Confirm your password" required>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="terms" required>
+                            <label class="form-check-label" for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+                        </div>
+                        <div id="signupError" class="error-message"></div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Sign Up</button>
+                        </div>
+                    </form>
+                    
+                    <div class="social-login">
+                        <p class="text-center">Or sign up with</p>
+                        <div class="d-grid">
+                            <button class="btn social-btn google-btn">
+                                <i class="bi bi-google me-2"></i> Google
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>© 2023 MindMate. All rights reserved.</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Login form submission
+            document.getElementById('loginForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                const errorElement = document.getElementById('loginError');
+                
+                try {
+                    const response = await fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email, password })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        // Store token in localStorage
+                        localStorage.setItem('token', data.token);
+                        localStorage.setItem('user', JSON.stringify({
+                            id: data.user_id,
+                            name: data.name
+                        }));
+                        
+                        // Redirect to dashboard
+                        window.location.href = '/dashboard';
+                    } else {
+                        errorElement.textContent = data.message || 'Login failed';
+                    }
+                } catch (error) {
+                    errorElement.textContent = 'An error occurred. Please try again.';
+                }
+            });
+            
+            // Signup form submission
+            document.getElementById('signupForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const name = document.getElementById('signupName').value;
+                const email = document.getElementById('signupEmail').value;
+                const password = document.getElementById('signupPassword').value;
+                const confirmPassword = document.getElementById('confirm-password').value;
+                const errorElement = document.getElementById('signupError');
+                
+                if (password !== confirmPassword) {
+                    errorElement.textContent = 'Passwords do not match!';
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/api/auth/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ name, email, password })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        errorElement.textContent = 'Registration successful! Please log in.';
+                        // Switch to login tab
+                        document.getElementById('login-tab').click();
+                    } else {
+                        errorElement.textContent = data.message || 'Registration failed';
+                    }
+                } catch (error) {
+                    errorElement.textContent = 'An error occurred. Please try again.';
+                }
+            });
+
+            // Check if user is already logged in
+            const token = localStorage.getItem('token');
+            if (token) {
+                // Verify token
+                fetch('/api/auth/verify', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.valid) {
+                        window.location.href = '/dashboard';
+                    } else {
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('user');
+                    }
+                })
+                .catch(() => {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
