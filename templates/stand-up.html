@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-<heth, initial-scale=1.0">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MindMate - Anonymous Stand-Up Room</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
@@ -556,6 +558,69 @@
                 display: none;
             }
         }
+        
+        .audio-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .volume-control {
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+        }
+        
+        .volume-control i {
+            margin-right: 10px;
+            color: var(--accent);
+        }
+        
+        .speaking-controls {
+            margin-top: 1rem;
+            text-align: center;
+        }
+        
+        .timer {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 1rem 0;
+            text-align: center;
+        }
+        
+        .floating-reaction {
+            position: absolute;
+            font-size: 2rem;
+            pointer-events: none;
+            z-index: 100;
+            animation: float-up 3s forwards ease-out;
+        }
+        
+        @keyframes float-up {
+            0% {
+                transform: translateY(0) scale(0.5);
+                opacity: 0;
+            }
+            10% {
+                transform: translateY(-10px) scale(1);
+                opacity: 1;
+            }
+            90% {
+                transform: translateY(-100px) scale(1);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-120px) scale(0.5);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -590,17 +655,19 @@
             
             <!-- Mic Test / Text Input Option -->
             <div class="input-prep">
-                <div class="info-label">How would you like to share?</div>
-                <div class="mode-toggle">
-                    <div class="mode-option mode-active" id="voice-mode-toggle">Voice</div>
-                    <div class="mode-option" id="text-mode-toggle">Text</div>
-                </div>
-                
+                <div class="info-label">Speaking Controls</div>
+                <button id="request-speak-btn" class="request-btn">
+                    Request to Speak
+                </button>
                 <div class="mic-test" id="mic-test-section">
                     <div class="info-label">Mic Test</div>
                     <div class="mic-level">
                         <div class="mic-level-fill" id="mic-level-indicator"></div>
                     </div>
+                </div>
+                <div class="speaking-controls" id="speaking-controls" style="display: none;">
+                    <button class="control-btn" id="start-btn">Start Speaking</button>
+                    <button class="control-btn end" id="end-btn" style="display: none;">End Turn</button>
                 </div>
             </div>
         </div>
@@ -613,7 +680,7 @@
                 
                 <div class="speaker-indicator">
                     <i class="bi bi-mic-fill"></i>
-                    <span id="speaker-status">Now Speaking</span>
+                    <span id="speaker-status">Waiting for next speaker</span>
                 </div>
                 
                 <div class="waveform" id="audio-waveform">
@@ -636,30 +703,17 @@
                     </div>
                 </div>
                 
-                <div class="timer" id="speak-timer">03:00</div>
+                <div class="timer" id="speak-timer">07:00</div>
                 
-                <div class="background-music">
-                    <span>Background Music</span>
-                    <div class="music-controls">
-                        <button class="music-btn" id="toggle-music">
-                            <i class="bi bi-play-fill"></i>
-                        </button>
-                        <input type="range" min="0" max="100" value="30" class="form-range" style="width: 80px;" id="volume-slider">
+                <div class="audio-controls">
+                    <div class="volume-control">
+                        <i class="bi bi-volume-up"></i>
+                        <input type="range" min="0" max="100" value="50" class="form-range" id="volume-slider">
                     </div>
+                    <button class="btn btn-outline-primary" id="mute-btn">
+                        <i class="bi bi-volume-up"></i>
+                    </button>
                 </div>
-            </div>
-            
-            <!-- Text Mode View (Initially Hidden) -->
-            <div class="text-mode" id="text-mode-view" style="display: none;">
-                <div class="message-display" id="message-container">
-                    <!-- Messages will appear here -->
-                </div>
-            </div>
-            
-            <!-- Controls (Visible when it's your turn) -->
-            <div class="controls" id="speaker-controls" style="display: none;">
-                <button class="control-btn" id="start-btn">Start Speaking</button>
-                <button class="control-btn end" id="end-btn" style="display: none;">End Turn</button>
             </div>
             
             <!-- Waiting Message (Default State) -->
@@ -748,56 +802,157 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // DOM Elements
-            const voiceModeToggle = document.getElementById('voice-mode-toggle');
-            const textModeToggle = document.getElementById('text-mode-toggle');
-            const voiceModeView = document.getElementById('voice-mode-view');
-            const textModeView = document.getElementById('text-mode-view');
-            const micTestSection = document.getElementById('mic-test-section');
-            const micLevelIndicator = document.getElementById('mic-level-indicator');
             const requestSpeakBtn = document.getElementById('request-speak-btn');
-            const speakerControls = document.getElementById('speaker-controls');
+            const speakingControls = document.getElementById('speaking-controls');
             const startBtn = document.getElementById('start-btn');
             const endBtn = document.getElementById('end-btn');
             const waitingMessage = document.getElementById('waiting-message');
-            const toggleGuidelinesBtn = document.getElementById('toggle-guidelines');
-            const guidelinesContent = document.getElementById('guidelines-content');
-            const toggleMusicBtn = document.getElementById('toggle-music');
-            const volumeSlider = document.getElementById('volume-slider');
             const speakerStatus = document.getElementById('speaker-status');
             const speakerAvatar = document.getElementById('speaker-avatar');
             const speakTimer = document.getElementById('speak-timer');
-            const leaveRoomBtn = document.getElementById('leave-room-btn');
-            const confirmLeaveBtn = document.getElementById('confirm-leave');
+            const volumeSlider = document.getElementById('volume-slider');
+            const muteBtn = document.getElementById('mute-btn');
+            const micLevelIndicator = document.getElementById('mic-level-indicator');
             const reactionBtns = document.querySelectorAll('.reaction-btn');
-            const messageContainer = document.getElementById('message-container');
-            
-            // Modals
-            const leaveModal = new bootstrap.Modal(document.getElementById('leaveModal'));
+            const userAvatar = document.querySelector('.user-avatar');
+            const userId = document.querySelector('.user-id');
+            const queuePosition = document.querySelector('.queue-position');
+            const roomInfo = document.querySelector('.info-value');
             
             // State variables
             let isInSpeakerQueue = false;
             let isCurrentSpeaker = false;
             let isSpeaking = false;
-            let isVoiceMode = true;
-            let isGuidelinesExpanded = true;
-            let isMusicPlaying = false;
+            let isMuted = false;
             let timerInterval;
-            let timeLeft = 180; // 3 minutes in seconds
+            let timeLeft = 420; // 7 minutes in seconds
             let audioContext;
             let microphone;
             let mediaRecorder;
             let audioChunks = [];
             let socket;
-            let peer;
+            let audioElement;
             
-            // Initialize WebSocket connection
+            // Initialize Socket.IO
             const initializeSocket = () => {
-                // This would connect to your actual Socket.IO server in production
-                // socket = io();
-                console.log('Socket.IO would initialize here');
+                socket = io();
                 
-                // Socket event handlers would be set up here
-                // For demo purposes, we'll simulate these events
+                socket.on('connect', () => {
+                    console.log('Connected to server');
+                });
+                
+                socket.on('room_info', (data) => {
+                    // Update user info
+                    userId.textContent = data.user_name;
+                    userAvatar.textContent = data.user_name.split(' ')[0][0];
+                    
+                    // Update room info
+                    roomInfo.textContent = `${data.total_users} people online`;
+                    
+                    // Update queue position
+                    if (data.queue_position) {
+                        queuePosition.textContent = `You are #${data.queue_position} in line`;
+                        isInSpeakerQueue = true;
+                    } else {
+                        queuePosition.textContent = 'You are not in line';
+                        isInSpeakerQueue = false;
+                    }
+                });
+                
+                socket.on('room_update', (data) => {
+                    // Update room info
+                    roomInfo.textContent = `${data.total_users} people online`;
+                    
+                    // Update speaker status
+                    if (data.current_speaker) {
+                        speakerStatus.textContent = `${data.current_speaker} is speaking`;
+                        speakerAvatar.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(data.current_speaker)}&background=F9C846&color=fff&size=160`;
+                    } else {
+                        speakerStatus.textContent = 'Waiting for next speaker';
+                    }
+                });
+                
+                socket.on('queue_update', (data) => {
+                    queuePosition.textContent = `You are #${data.position} in line`;
+                    isInSpeakerQueue = true;
+                });
+                
+                socket.on('speaking_status', (data) => {
+                    if (data.speaker === userId.textContent) {
+                        isCurrentSpeaker = true;
+                        speakingControls.style.display = 'block';
+                        waitingMessage.style.display = 'none';
+                        startTimer();
+                    }
+                });
+                
+                socket.on('speaking_ended', (data) => {
+                    if (isCurrentSpeaker) {
+                        isCurrentSpeaker = false;
+                        isSpeaking = false;
+                        speakingControls.style.display = 'none';
+                        waitingMessage.style.display = 'block';
+                        stopTimer();
+                        
+                        // Show break message
+                        waitingMessage.innerHTML = `
+                            <h3>Break Time</h3>
+                            <p class="mt-3">Next speaker: ${data.next_speaker || 'None'}</p>
+                            <p>Break ends in: <span id="break-timer">60</span> seconds</p>
+                        `;
+                        
+                        // Start break timer
+                        let breakTimeLeft = 60;
+                        const breakTimer = setInterval(() => {
+                            breakTimeLeft--;
+                            document.getElementById('break-timer').textContent = breakTimeLeft;
+                            
+                            if (breakTimeLeft <= 0) {
+                                clearInterval(breakTimer);
+                                waitingMessage.innerHTML = `
+                                    <h3>Waiting for next speaker...</h3>
+                                    <p class="mt-3">When it's your turn, you'll be able to share your thoughts with the group.</p>
+                                    <div class="typing-animation mt-2">
+                                        <span class="typing-dot"></span>
+                                        <span class="typing-dot"></span>
+                                        <span class="typing-dot"></span>
+                                    </div>
+                                `;
+                            }
+                        }, 1000);
+                    }
+                });
+                
+                socket.on('audio_stream', (data) => {
+                    if (!isMuted && data.speaker !== userId.textContent) {
+                        // Create audio element if it doesn't exist
+                        if (!audioElement) {
+                            audioElement = new Audio();
+                            audioElement.volume = volumeSlider.value / 100;
+                        }
+                        
+                        // Play the audio
+                        const audioBlob = new Blob([data.audio], { type: 'audio/webm' });
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        audioElement.src = audioUrl;
+                        audioElement.play();
+                    }
+                });
+                
+                socket.on('reaction', (data) => {
+                    // Create floating reaction
+                    const reaction = document.createElement('div');
+                    reaction.className = 'floating-reaction';
+                    reaction.textContent = data.reaction;
+                    reaction.style.left = `${Math.random() * 80 + 10}%`;
+                    reaction.style.bottom = '20%';
+                    document.querySelector('.center-panel').appendChild(reaction);
+                    
+                    // Remove reaction after animation
+                    setTimeout(() => {
+                        reaction.remove();
+                    }, 3000);
+                });
             };
             
             // Initialize WebRTC for voice mode
@@ -826,9 +981,7 @@
                         micLevelIndicator.style.width = `${volume}%`;
                         
                         // Continue updating
-                        if (isVoiceMode) {
-                            requestAnimationFrame(visualizeMic);
-                        }
+                        requestAnimationFrame(visualizeMic);
                     };
                     
                     visualizeMic();
@@ -838,29 +991,101 @@
                     mediaRecorder = new MediaRecorder(stream);
                     
                     mediaRecorder.addEventListener('dataavailable', event => {
-                        audioChunks.push(event.data);
+                        if (isSpeaking) {
+                            // Send audio data to server
+                            socket.emit('audio_stream', {
+                                audio: event.data
+                            });
+                        }
                     });
                     
-                    mediaRecorder.addEventListener('stop', () => {
-                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                        const audioUrl = URL.createObjectURL(audioBlob);
-                        const audioElement = document.createElement('audio');
-                        audioElement.src = audioUrl;
-                        audioElement.controls = true;
-                        audioElement.play();
-                        
-                        // Send audio to server
-                        sendAudioToServer(audioBlob);
-                    });
-                    
-                    mediaRecorder.start();
+                    // Start recording in small chunks
+                    mediaRecorder.start(100);
                 } catch (error) {
                     console.error('Error accessing microphone:', error);
                 }
             };
             
+            // Timer functions
+            const startTimer = () => {
+                timeLeft = 420; // Reset to 7 minutes
+                updateTimerDisplay();
+                
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    updateTimerDisplay();
+                    
+                    if (timeLeft <= 0) {
+                        stopTimer();
+                        endSpeaking();
+                    }
+                }, 1000);
+            };
+            
+            const stopTimer = () => {
+                clearInterval(timerInterval);
+            };
+            
+            const updateTimerDisplay = () => {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                speakTimer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            };
+            
+            // Speaking functions
+            const startSpeaking = () => {
+                if (!isCurrentSpeaker) return;
+                
+                isSpeaking = true;
+                startBtn.style.display = 'none';
+                endBtn.style.display = 'inline-block';
+                
+                socket.emit('start_speaking');
+            };
+            
+            const endSpeaking = () => {
+                if (!isSpeaking) return;
+                
+                isSpeaking = false;
+                startBtn.style.display = 'inline-block';
+                endBtn.style.display = 'none';
+                
+                socket.emit('end_speaking');
+            };
+            
+            // Event Listeners
+            requestSpeakBtn.addEventListener('click', () => {
+                socket.emit('request_speak');
+            });
+            
+            startBtn.addEventListener('click', startSpeaking);
+            endBtn.addEventListener('click', endSpeaking);
+            
+            volumeSlider.addEventListener('input', () => {
+                if (audioElement) {
+                    audioElement.volume = volumeSlider.value / 100;
+                }
+            });
+            
+            muteBtn.addEventListener('click', () => {
+                isMuted = !isMuted;
+                muteBtn.innerHTML = isMuted ? 
+                    '<i class="bi bi-volume-mute"></i>' : 
+                    '<i class="bi bi-volume-up"></i>';
+                socket.emit('toggle_mute');
+            });
+            
+            reactionBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    socket.emit('send_reaction', {
+                        reaction: btn.dataset.reaction
+                    });
+                });
+            });
+            
             // Initialize the app
-            initializeApp();
+            initializeSocket();
+            initializeWebRTC();
         });
     </script>
 </body>
