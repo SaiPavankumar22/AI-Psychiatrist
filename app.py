@@ -21,6 +21,7 @@ from datetime import datetime, timedelta
 from functools import wraps
 import jwt
 from werkzeug.security import generate_password_hash, check_password_hash
+from standup_server import socketio, init_app
 
 # Load environment variables
 load_dotenv()
@@ -413,6 +414,10 @@ def index():
     logger.info("Serving index page")
     return render_template('landing.html')
 
+@app.route('/games')
+def games():
+    logger.info("Serving games page")
+    return render_template('games.html')
 
 
 @app.route('/clear_history', methods=['POST'])
@@ -711,4 +716,5 @@ def voice():
 
 if __name__ == '__main__':
     logger.info("Starting Flask application")
-    app.run(debug=True)
+    init_app(app)
+    socketio.run(app, debug=True)
