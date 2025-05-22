@@ -714,6 +714,15 @@ def voice():
         return redirect(url_for('index'))
     return render_template('index.html')
 
+@app.route('/history')
+def history():
+    if 'user_id' not in session:
+        return redirect(url_for('index'))
+    return render_template('history.html')
+
+
+
+
 if __name__ == '__main__':
     logger.info("Starting Flask application")
     init_app(app)
