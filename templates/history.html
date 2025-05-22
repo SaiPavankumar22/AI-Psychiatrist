@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindMate - History</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #a5d8ff;
+            --secondary-color: #ffd6e7;
+            --tertiary-color: #c3fae8;
+            --accent-color: #5c7cfa;
+            --text-color: #495057;
+            --light-bg: #f8f9fa;
+            --white: #ffffff;
+        }
+        
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, var(--light-bg), var(--tertiary-color));
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+        
+        .history-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        
+        .top-bar {
+            background-color: var(--white);
+            border-radius: 15px;
+            padding: 0.8rem 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #343a40;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-highlight {
+            color: var(--accent-color);
+        }
+        
+        .user-controls a {
+            margin-left: 1rem;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .user-controls a:hover {
+            color: var(--accent-color);
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .panel {
+            background-color: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 1rem;
+        }
+        
+        .panel-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .history-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            background-color: var(--white);
+            border: 1px solid #e9ecef;
+            border-radius: 20px;
+            padding: 0.5rem 1.2rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn.active {
+            background-color: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+        
+        .filter-btn:hover:not(.active) {
+            background-color: #e9ecef;
+        }
+        
+        .date-range {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        .date-input {
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            background-color: #e9ecef;
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2rem;
+            top: 0.25rem;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: var(--white);
+            border: 2px solid var(--accent-color);
+            z-index: 1;
+        }
+        
+        .timeline-card {
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            padding: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .timeline-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.8rem;
+        }
+        
+        .timeline-category {
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-right: 0.5rem;
+        }
+        
+        .category-chat {
+            background-color: #e7f5ff;
+            color: #1971c2;
+        }
+        
+        .category-diary {
+            background-color: #fff3bf;
+            color: #e67700;
+        }
+        
+        .category-goal {
+            background-color: #d3f9d8;
+            color: #2b8a3e;
+        }
+        
+        .category-task {
+            background-color: #ffe3e3;
+            color: #c92a2a;
+        }
+        
+        .category-mood {
+            background-color: #e5dbff;
+            color: #6741d9;
+        }
+        
+        .timeline-date {
+            font-size: 0.85rem;
+            color: #868e96;
+        }
+        
+        .timeline-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .timeline-content {
+            font-size: 0.95rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .timeline-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+        
+        .action-link {
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .action-link i {
+            margin-right: 0.3rem;
+        }
+        
+        .pagination {
+            justify-content: center;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="history-container">
+        <div class="top-bar">
+            <a href="../index.html" class="logo">
+                <i class="bi bi-brain me-2"></i>
+                Mind<span class="logo-highlight">Mate</span>
+            </a>
+            
+            <div class="user-controls">
+                <a href="dashboard.html">
+                    <i class="bi bi-grid"></i>
+                    Dashboard
+                </a>
+                <a href="chat.html">
+                    <i class="bi bi-chat-dots"></i>
+                    Chat
+                </a>
+                <a href="diary.html">
+                    <i class="bi bi-journal-text"></i>
+                    Diary
+                </a>
+                <a href="profile.html">
+                    <i class="bi bi-person"></i>
+                    Profile
+                </a>
+            </div>
+        </div>
+        
+        <div class="page-header">
+            <h1 class="page-title">Your History</h1>
+            <div class="date-range">
+                <span>From</span>
+                <input type="date" id="date-from" class="date-input">
+                <span>To</span>
+                <input type="date" id="date-to" class="date-input">
+                <button id="apply-date-filter" class="filter-btn">Apply</button>
+            </div>
+        </div>
+        
+        <div class="history-filters">
+            <button class="filter-btn active" data-filter="all">All Activities</button>
+            <button class="filter-btn" data-filter="chat">Chat Sessions</button>
+            <button class="filter-btn" data-filter="diary">Diary Entries</button>
+            <button class="filter-btn" data-filter="goal">Goals & Challenges</button>
+            <button class="filter-btn" data-filter="mood">Mood Tracking</button>
+            <button class="filter-btn" data-filter="task">Tasks</button>
+        </div>
+        
+        <div class="panel">
+            <div class="panel-header">
+                <h2 class="panel-title">Activity Timeline</h2>
+                <div>
+                    <select id="sort-order" class="form-select form-select-sm">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="timeline" id="activity-timeline">
+                <!-- Timeline items will be populated here -->
+                <div class="timeline-item" data-category="chat">
+                    <div class="timeline-card">
+                        <div class="timeline-header">
+                            <div>
+                                <span class="timeline-category category-chat">Chat</span>
+                            </div>
+                            <div class="timeline-date">May 12, 2025 - 10:30 AM</div>
+                        </div>
+                        <h3 class="timeline-title">Anxiety Management Session</h3>
+                        <div class="timeline-content">
+                            <p>Discussed techniques for managing anxiety and practiced a breathing exercise.</p>
+                        </div>
+                        <div class="timeline-actions">
+                            <a href="#" class="action-link view-detail" data-id="chat1">
+                                <i class="bi bi-eye"></i> View Full Conversation
+                            </a>
+                            <a href="chat.html" class="action-link">
+                                <i class="bi bi-arrow-right-circle"></i> Continue Chat
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item" data-category="diary">
+                    <div class="timeline-card">
+                        <div class="timeline-header">
+                            <div>
+                                <span class="timeline-category category-diary">Diary</span>
+                            </div>
+                            <div class="timeline-date">May 11, 2025 - 9:15 PM</div>
+                        </div>
+                        <h3 class="timeline-title">Reflections on My Day</h3>
+                        <div class="timeline-content">
+                            <p>Today was challenging but I managed to stay focused. I noticed that my mood improved after my afternoon walk...</p>
+                        </div>
+                        <div class="timeline-actions">
+                            <a href="#" class="action-link view-detail" data-id="diary1">
+                                <i class="bi bi-eye"></i> View Full Entry
+                            </a>
+                            <a href="diary.html" class="action-link">
+                                <i class="bi bi-pencil"></i> Edit Entry
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item" data-category="goal">
+                    <div class="timeline-card">
+                        <div class="timeline-header">
+                            <div>
+                                <span class="timeline-category category-goal">Goal</span>
+                            </div>
+                            <div class="timeline-date">May 11, 2025 - 8:00 PM</div>
+                        </div>
+                        <h3 class="timeline-title">Completed Daily Meditation</h3>
+                        <div class="timeline-content">
+                            <p>10 minute mindfulness meditation completed. Current streak: 5 days</p>
+                        </div>
+                        <div class="timeline-actions">
+                            <a href="goals.html" class="action-link">
+                                <i class="bi bi-graph-up"></i> View Progress
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item" data-category="mood">
+                    <div class="timeline-card">
+                        <div class="timeline-header">
+                            <div>
+                                <span class="timeline-category category-mood">Mood</span>
+                            </div>
+                            <div class="timeline-date">May 11, 2025 - 10:00 AM</div>
+                        </div>
+                        <h3 class="timeline-title">Morning Mood: Good</h3>
+                        <div class="timeline-content">
+                            <p>Feeling positive and focused this morning. Slept well last night.</p>
+                            <div class="d-flex align-items-center">
+                                <div style="font-size: 2rem; margin-right: 0.5rem;">🙂</div>
+                                <div class="progress flex-grow-1" style="height: 8px;">
+                                    <div class="progress-bar bg-info" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timeline-actions">
+                            <a href="#" class="action-link">
+                                <i class="bi bi-graph-up"></i> View Mood Trends
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="timeline-item" data-category="task">
+                    <div class="timeline-card">
+                        <div class="timeline-header">
+                            <div>
+                                <span class="timeline-category category-task">Task</span>
+                            </div>
+                            <div class="timeline-date">May 10, 2025 - 3:30 PM</div>
+                        </div>
+                        <h3 class="timeline-title">Completed: Schedule Dentist Appointment</h3>
+                        <div class="timeline-content">
+                            <p>Medium priority task completed</p>
+                        </div>
+                        <div class="timeline-actions">
+                            <a href="#" class="action-link">
+                                <i class="bi bi-list-check"></i> View Tasks
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <nav aria-label="Activity history pagination">
+                <ul class="pagination">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize date filters with recent dates
+            const today = new Date();
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(today.getDate() - 30);
+            
+            document.getElementById('date-to').valueAsDate = today;
+            document.getElementById('date-from').valueAsDate = thirtyDaysAgo;
+            
+            // Filter buttons
+            const filterButtons = document.querySelectorAll('.filter-btn[data-filter]');
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    const filter = this.getAttribute('data-filter');
+                    filterTimeline(filter);
+                });
+            });
+            
+            // Apply date filter
+            document.getElementById('apply-date-filter').addEventListener('click', function() {
+                const fromDate = document.getElementById('date-from').value;
+                const toDate = document.getElementById('date-to').value;
+                
+                if (!fromDate || !toDate) {
+                    alert('Please select both from and to dates');
+                    return;
+                }
+                
+                // Get current category filter
+                const activeFilter = document.querySelector('.filter-btn[data-filter].active').getAttribute('data-filter');
+                
+                // Call API to filter by date and category
+                fetchHistoryData(fromDate, toDate, activeFilter);
+            });
+            
+            // Sort order change
+            document.getElementById('sort-order').addEventListener('change', function() {
+                const sortOrder = this.value;
+                const fromDate = document.getElementById('date-from').value;
+                const toDate = document.getElementById('date-to').value;
+                const activeFilter = document.querySelector('.filter-btn[data-filter].active').getAttribute('data-filter');
+                
+                fetchHistoryData(fromDate, toDate, activeFilter, sortOrder);
+            });
+            
+            // Filter timeline based on category
+            function filterTimeline(filter) {
+                const timelineItems = document.querySelectorAll('.timeline-item');
+                
+                timelineItems.forEach(item => {
+                    if (filter === 'all' || item.getAttribute('data-category') === filter) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            }
+            
+            // Fetch history data from backend
+            function fetchHistoryData(fromDate, toDate, category = 'all', sortOrder = 'newest') {
+                // Show loading state
+                const timeline = document.getElementById('activity-timeline');
+                
+                // Prepare query parameters
+                let params = new URLSearchParams();
+                if (fromDate) params.append('from_date', fromDate);
+                if (toDate) params.append('to_date', toDate);
+                if (category !== 'all') params.append('category', category);
+                params.append('sort', sortOrder);
+                
+                // Route to backend: /api/history/get-history
+                fetch(`/api/history/get-history?${params.toString()}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Process data and update timeline
+                    console.log('History data:', data);
+                })
+                .catch(error => {
+                    console.error('Error fetching history:', error);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
